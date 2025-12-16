@@ -187,7 +187,7 @@
             min-height: 20px;
         }
 
-        /* 加入群按钮样式 */
+        /* GitHub 按钮样式 */
         .join-group-btn {
             position: relative;
             display: inline-block;
@@ -232,64 +232,6 @@
         
         .join-group-btn:hover::before {
             opacity: 1;
-        }
-        
-        /* 弹窗样式 */
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            text-align: center;
-            max-width: 300px;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .popup p {
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        
-        .popup-close {
-            background-color: #4a90e2;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -60%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
-        }
-        
-        /* QQ协议检测样式 */
-        .qq-protocol-check {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-        }
-        
-        .qq-protocol-box {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 300px;
-            text-align: center;
         }
         
         .emoji {
@@ -376,10 +318,10 @@
             <div class="buttons-container">
                 <button class="submit-btn" id="submitBtn" disabled>点击查看</button>
                 
-                <!-- 第一页的加入群按钮 -->
-                <button class="join-group-btn" id="joinGroupBtn1">
-                    <span class="emoji">🤪</span> 点我加入沙雕分享群 <span class="emoji">🤪</span>
-                </button>
+                <!-- GitHub 链接按钮 -->
+                <a href="https://github.com/YuenSzeHong" target="_blank" class="join-group-btn">
+                    <span class="emoji">⭐</span> 访问我的 GitHub <span class="emoji">⭐</span>
+                </a>
             </div>
         </div>
         
@@ -400,46 +342,26 @@
             <div class="buttons-container">
                 <button class="back-btn" id="backBtn">返回重新测试</button>
                 
-                <!-- 第二页的加入群按钮 -->
-                <button class="join-group-btn" id="joinGroupBtn2">
-                    <span class="emoji">🤪</span> 点我加入沙雕分享群 <span class="emoji">🤪</span>
-                </button>
+                <!-- GitHub 链接按钮 -->
+                <a href="https://github.com/YuenSzeHong" target="_blank" class="join-group-btn">
+                    <span class="emoji">⭐</span> 访问我的 GitHub <span class="emoji">⭐</span>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- 弹窗 -->
-    <div id="popup" class="popup" style="display: none;">
-        <p>群号 <strong>619629743</strong> 已复制到剪贴板</p>
-        <button class="popup-close" id="popupClose">确定</button>
-    </div>
-
-    <!-- QQ协议检测弹窗 -->
-    <div id="qqProtocolCheck" class="qq-protocol-check" style="display: none;">
-        <div class="qq-protocol-box">
-            <p>正在打开QQ，请稍候...</p>
-        </div>
-    </div>
-
     <script>
-        // ========== 配置常量 ==========
-        const CONFIG = {
-            QQ_GROUP_NUMBER: '619629743',
-            QQ_SCHEME: 'mqqapi://card/show_pslcard?src_type=internal&version=1&uin=619629743&card_type=group&source=qrcode',
-            QQ_UNIVERSAL_LINK: 'https://qm.qq.com/q/3iFnS9bwpq',
-            QQ_TIMEOUT: 3000,
-            POPUP_DURATION: 2000
-        };
-
         // ========== 关键词库 ==========
         const KEYWORD_LIBRARY = {
             male: [
                 "水群机器", "史料搬运工", "究极变态", "苦命鸳鸯", 
-                "无能的丈夫", "颜值担当", "少女杀手", "鹿官爱好者"
+                "暖心天使", "阳光小零", "柔情小南良", "气氛担当", 
+                "颜值担当", "紫薇星人"
             ],
             female: [
-                "水群机器", "史料搬运工", "究极变态", "苦命鸳鸯", 
-                "颜值担当", "气氛担当", "可爱女人", "无能的妻子", "黄金矿工"
+                "水群机器", "史料搬运工", "暖心天使", "阳光小零", 
+                "柔情小南良", "苦命鸳鸯", "气氛担当", "颜值担当", 
+                "究极变态", "紫薇星人"
             ],
             unknown: [
                 "水群机器", "史料搬运工", "暖心天使", "阳光小零", 
@@ -457,10 +379,7 @@
             inputPage: document.getElementById('inputPage'),
             resultPage: document.getElementById('resultPage'),
             keywordDisplay: document.getElementById('keywordDisplay'),
-            backBtn: document.getElementById('backBtn'),
-            popup: document.getElementById('popup'),
-            popupClose: document.getElementById('popupClose'),
-            qqProtocolCheck: document.getElementById('qqProtocolCheck')
+            backBtn: document.getElementById('backBtn')
         };
 
         // ========== 工具函数 ==========
@@ -483,13 +402,6 @@
         async function getRandomItemWithUsername(array, username) {
             const hash = await sha256Hash(username);
             return array[(hash >>> 0) % array.length];
-        }
-
-        /**
-         * 从数组中随机选择一个元素
-         */
-        function getRandomItem(array) {
-            return array[Math.floor(Math.random() * array.length)];
         }
 
         /**
@@ -518,60 +430,7 @@
         }
 
         /**
-         * 显示弹窗
-         */
-        function showPopup(duration = CONFIG.POPUP_DURATION) {
-            DOM.popup.style.display = 'block';
-            setTimeout(() => {
-                DOM.popup.style.display = 'none';
-            }, duration);
-        }
-
-        /**
-         * 复制文本到剪贴板
-         */
-        async function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            document.body.appendChild(textarea);
-            textarea.select();
-            
-            try {
-                document.execCommand('copy');
-                return true;
-            } catch (err) {
-                console.error('复制失败:', err);
-                return false;
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        }
-
-        /**
-         * 跳转到QQ群
-         */
-        function openQQGroup() {
-            DOM.qqProtocolCheck.style.display = 'flex';
-            
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = CONFIG.QQ_SCHEME;
-            document.body.appendChild(iframe);
-            
-            setTimeout(() => {
-                if (!document.hidden) {
-                    window.location.href = CONFIG.QQ_UNIVERSAL_LINK;
-                }
-                document.body.removeChild(iframe);
-                DOM.qqProtocolCheck.style.display = 'none';
-            }, CONFIG.QQ_TIMEOUT);
-        }
-
-        // ========== 表单验证 ==========
-        
-        /**
-         * 获取验证错误信息
+         * 获取表单验证错误信息
          */
         function getValidationError(nickname, genderSelected) {
             if (!nickname && !genderSelected) return "请输入昵称并选择性别";
@@ -619,15 +478,6 @@
             DOM.nicknameInput.focus();
         }
 
-        /**
-         * 处理加入QQ群
-         */
-        function handleJoinGroup() {
-            copyToClipboard(CONFIG.QQ_GROUP_NUMBER);
-            showPopup();
-            openQQGroup();
-        }
-
         // ========== 事件绑定 ==========
         
         DOM.nicknameInput.addEventListener('input', checkFormValidity);
@@ -638,16 +488,6 @@
         
         DOM.submitBtn.addEventListener('click', showResult);
         DOM.backBtn.addEventListener('click', goBack);
-        DOM.popupClose.addEventListener('click', () => {
-            DOM.popup.style.display = 'none';
-        });
-
-        // 使用事件委托处理两个加入群按钮
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.join-group-btn')) {
-                handleJoinGroup();
-            }
-        });
         
         // 回车键提交功能
         document.addEventListener('keydown', (event) => {
