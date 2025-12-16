@@ -1,80 +1,663 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello, Deno</title>
-  <link rel="preload" href="https://demo-styles.deno.deno.net/fonts/Moranga-Regular.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="https://demo-styles.deno.deno.net/fonts/Moranga-Medium.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="https://demo-styles.deno.deno.net/fonts/Recursive_Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="https://demo-styles.deno.deno.net/styles.css">
-  <style>
-    img {
-      display: inline-block;
-      vertical-align: middle;
-    }
-  </style>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你的年度关键词</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .nickname-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .nickname-input:focus {
+            border-color: #4a90e2;
+        }
+        
+        .gender-section {
+            margin-bottom: 40px;
+        }
+        
+        .gender-title {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        .gender-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .gender-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .gender-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #777;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+        
+        .gender-option input[type="radio"] {
+            display: none;
+        }
+        
+        .gender-option input[type="radio"]:checked + .gender-circle {
+            border-color: #4a90e2;
+            background-color: #f0f8ff;
+            color: #4a90e2;
+            transform: scale(1.1);
+        }
+        
+        .gender-label {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        .submit-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.2);
+        }
+        
+        .submit-btn:hover {
+            background-color: #3a7bc8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(74, 144, 226, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-page {
+            display: none;
+        }
+        
+        .keyword-box {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        
+        .keyword {
+            font-size: 2rem;
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 2px dashed #e74c3c;
+        }
+        
+        .back-btn {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .page {
+            width: 100%;
+        }
+        
+        .input-hint {
+            text-align: left;
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            margin-left: 5px;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            min-height: 20px;
+        }
 
+        /* 加入群按钮样式 */
+        .join-group-btn {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .join-group-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+        }
+        
+        .join-group-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .join-group-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fad0c4 0%, #ff9a9e 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .join-group-btn:hover::before {
+            opacity: 1;
+        }
+        
+        /* 弹窗样式 */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+            max-width: 300px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .popup p {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .popup-close {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        
+        /* QQ协议检测样式 */
+        .qq-protocol-check {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+        
+        .qq-protocol-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 300px;
+            text-align: center;
+        }
+        
+        .emoji {
+            display: inline-block;
+            animation: bounce 1.5s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .gender-options {
+                gap: 10px;
+            }
+            
+            .gender-circle {
+                width: 50px;
+                height: 50px;
+            }
+
+            .join-group-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
 <body>
-    <main>
-      <section>
-        <a href="https://deno.com/deploy">
-        </a>
-      <h1>
-        <p>
-          Hello, Deno!
-        </p>
-      </h1>
-      <p>
-        This little example is being served by <a href="https://deno.com/">Deno</a>.
-        You can run it locally or in porduction on <a href="https://deno.com/deploy">Deno Deploy</a> or other hosting platforms.
-      </p>
-      <ul>
-        <li>Run it locally with<code>deno task dev</code></li>
-        <li>Deploy it to <a href="https://deno.com/deploy">Deno Deploy</a> via the CLI by running<code>deno deploy</code></li>
-        <li>Run it locally and share it publically by running <code>deno deploy --connected</code></li>
-      </ul>
-    </section>
-      <hr>
-    <section>
-      <h2>What's next?</h2>
-      <p>
-        You can clone this example and deploy it to Deno Deploy in just a few clicks
-        <a href="https://app.deno.com/new?clone=https://github.com/denoland/examples&path=hello-world"><img src="https://deno.com/button" alt="Deploy on Deno"/></a>
-      </p>
-      <ul>
-        <li>
-          <a href="https://docs.deno.com/examples">More examples in the Deno Docs</a>
-        </li>
-        <li>
-          <a href="https://deno.com/deploy">Deno Deploy Early Access</a>
-        </li>
-      </ul>
-    </section>
-    </main>
-    <hr>
-    <footer>
-      <section>
-      <ul class="flex-btwn">
-        <li>
-          <a href="https://deno.com">BlueSky</a>
-        </li>
-        <li>
-          <a href="https://deno.com">Twitter</a>
-        </li>
-        <li>
-          <a href="https://deno.com">YouTube</a>
-        </li>
-        <li>
-          <a href="https://deno.com">Newsletter</a>
-        </li>
-        <li>
-          <a href="https://deno.com">Deno</a>
-        </li>
-      </ul>
-      </section>
-    </footer>
+    <div class="container">
+        <!-- 第一页：输入页面 -->
+        <div class="page input-page" id="inputPage">
+            <h1>你的年度关键词</h1>
+            
+            <div class="input-section">
+                <input type="text" class="nickname-input" id="nicknameInput" placeholder="请输入你的昵称">
+                <div class="input-hint">请输入你的昵称，然后选择性别</div>
+            </div>
+            
+            <div class="gender-section">
+                <div class="gender-title">请选择性别</div>
+                <div class="gender-options">
+                    <!-- 男性选项 -->
+                    <label class="gender-option">
+                        <input type="radio" name="gender" value="male">
+                        <div class="gender-circle">♂</div>
+                        <div class="gender-label">男</div>
+                    </label>
+                    
+                    <!-- 女性选项 -->
+                    <label class="gender-option">
+                        <input type="radio" name="gender" value="female">
+                        <div class="gender-circle">♀</div>
+                        <div class="gender-label">女</div>
+                    </label>
+                    
+                    <!-- 未知选项 -->
+                    <label class="gender-option">
+                        <input type="radio" name="gender" value="unknown">
+                        <div class="gender-circle">?</div>
+                        <div class="gender-label">未知</div>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="buttons-container">
+                <button class="submit-btn" id="submitBtn" disabled>点击查看</button>
+                
+                <!-- 第一页的加入群按钮 -->
+                <button class="join-group-btn" id="joinGroupBtn1">
+                    <span class="emoji">🤪</span> 点我加入沙雕分享群 <span class="emoji">🤪</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 第二页：结果页面 -->
+        <div class="page result-page" id="resultPage">
+            <h1>你的年度关键词</h1>
+            
+            <div class="keyword-box">
+                <p style="font-size: 1.3rem; color: #555; margin-bottom: 20px;">
+                    根据你的选择，系统为你生成了专属年度关键词：
+                </p>
+                <div class="keyword" id="keywordDisplay"></div>
+                <p style="color: #777; margin-top: 20px; font-size: 1.1rem;">
+                    快分享给你的朋友们看看吧！
+                </p>
+            </div>
+
+            <div class="buttons-container">
+                <button class="back-btn" id="backBtn">返回重新测试</button>
+                
+                <!-- 第二页的加入群按钮 -->
+                <button class="join-group-btn" id="joinGroupBtn2">
+                    <span class="emoji">🤪</span> 点我加入沙雕分享群 <span class="emoji">🤪</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div id="popup" class="popup" style="display: none;">
+        <p>群号 <strong>619629743</strong> 已复制到剪贴板</p>
+        <button class="popup-close" id="popupClose">确定</button>
+    </div>
+
+    <!-- QQ协议检测弹窗 -->
+    <div id="qqProtocolCheck" class="qq-protocol-check" style="display: none;">
+        <div class="qq-protocol-box">
+            <p>正在打开QQ，请稍候...</p>
+        </div>
+    </div>
+
+    <script>
+        // ========== 配置常量 ==========
+        const CONFIG = {
+            QQ_GROUP_NUMBER: '619629743',
+            QQ_SCHEME: 'mqqapi://card/show_pslcard?src_type=internal&version=1&uin=619629743&card_type=group&source=qrcode',
+            QQ_UNIVERSAL_LINK: 'https://qm.qq.com/q/3iFnS9bwpq',
+            QQ_TIMEOUT: 3000,
+            POPUP_DURATION: 2000
+        };
+
+        // ========== 关键词库 ==========
+        const KEYWORD_LIBRARY = {
+            male: [
+                "水群机器", "史料搬运工", "究极变态", "苦命鸳鸯", 
+                "无能的丈夫", "颜值担当", "少女杀手", "鹿官爱好者"
+            ],
+            female: [
+                "水群机器", "史料搬运工", "究极变态", "苦命鸳鸯", 
+                "颜值担当", "气氛担当", "可爱女人", "无能的妻子", "黄金矿工"
+            ],
+            unknown: [
+                "水群机器", "史料搬运工", "暖心天使", "阳光小零", 
+                "柔情小南良", "苦命鸳鸯", "气氛担当", "颜值担当", 
+                "究极变态", "紫薇星人"
+            ]
+        };
+
+        // ========== DOM 元素缓存 ==========
+        const DOM = {
+            nicknameInput: document.getElementById('nicknameInput'),
+            genderRadios: document.querySelectorAll('input[name="gender"]'),
+            submitBtn: document.getElementById('submitBtn'),
+            errorMessage: document.getElementById('errorMessage'),
+            inputPage: document.getElementById('inputPage'),
+            resultPage: document.getElementById('resultPage'),
+            keywordDisplay: document.getElementById('keywordDisplay'),
+            backBtn: document.getElementById('backBtn'),
+            popup: document.getElementById('popup'),
+            popupClose: document.getElementById('popupClose'),
+            qqProtocolCheck: document.getElementById('qqProtocolCheck')
+        };
+
+        // ========== 工具函数 ==========
+        
+        /**
+         * 使用 SHA-256 生成哈希（异步）
+         */
+        async function sha256Hash(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const view = new Uint8Array(hashBuffer);
+            // 使用前4个字节转换为32位整数
+            return (view[0] << 24) | (view[1] << 16) | (view[2] << 8) | view[3];
+        }
+
+        /**
+         * 基于用户名的确定性随机选择（异步）
+         */
+        async function getRandomItemWithUsername(array, username) {
+            const hash = await sha256Hash(username);
+            return array[(hash >>> 0) % array.length];
+        }
+
+        /**
+         * 从数组中随机选择一个元素
+         */
+        function getRandomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        /**
+         * 获取选中的性别
+         */
+        function getSelectedGender() {
+            for (const radio of DOM.genderRadios) {
+                if (radio.checked) return radio.value;
+            }
+            return null;
+        }
+
+        /**
+         * 从关键词库中获取随机关键词（基于用户名，异步）
+         */
+        async function getRandomKeyword(gender, username) {
+            return await getRandomItemWithUsername(KEYWORD_LIBRARY[gender], username.trim());
+        }
+
+        /**
+         * 切换页面显示
+         */
+        function switchPage(fromPage, toPage) {
+            fromPage.style.display = 'none';
+            toPage.style.display = 'block';
+        }
+
+        /**
+         * 显示弹窗
+         */
+        function showPopup(duration = CONFIG.POPUP_DURATION) {
+            DOM.popup.style.display = 'block';
+            setTimeout(() => {
+                DOM.popup.style.display = 'none';
+            }, duration);
+        }
+
+        /**
+         * 复制文本到剪贴板
+         */
+        async function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                return true;
+            } catch (err) {
+                console.error('复制失败:', err);
+                return false;
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        /**
+         * 跳转到QQ群
+         */
+        function openQQGroup() {
+            DOM.qqProtocolCheck.style.display = 'flex';
+            
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = CONFIG.QQ_SCHEME;
+            document.body.appendChild(iframe);
+            
+            setTimeout(() => {
+                if (!document.hidden) {
+                    window.location.href = CONFIG.QQ_UNIVERSAL_LINK;
+                }
+                document.body.removeChild(iframe);
+                DOM.qqProtocolCheck.style.display = 'none';
+            }, CONFIG.QQ_TIMEOUT);
+        }
+
+        // ========== 表单验证 ==========
+        
+        /**
+         * 获取验证错误信息
+         */
+        function getValidationError(nickname, genderSelected) {
+            if (!nickname && !genderSelected) return "请输入昵称并选择性别";
+            if (!nickname) return "请输入昵称";
+            if (!genderSelected) return "请选择性别";
+            return "";
+        }
+
+        /**
+         * 检查表单有效性并更新UI
+         */
+        function checkFormValidity() {
+            const nickname = DOM.nicknameInput.value.trim();
+            const genderSelected = Array.from(DOM.genderRadios).some(radio => radio.checked);
+            const isValid = nickname && genderSelected;
+            
+            DOM.submitBtn.disabled = !isValid;
+            DOM.errorMessage.textContent = isValid ? "" : getValidationError(nickname, genderSelected);
+        }
+
+        // ========== 页面控制 ==========
+        
+        /**
+         * 显示结果页面
+         */
+        async function showResult() {
+            const selectedGender = getSelectedGender();
+            const nickname = DOM.nicknameInput.value.trim();
+            const keyword = await getRandomKeyword(selectedGender, nickname);
+            
+            DOM.keywordDisplay.textContent = keyword;
+            switchPage(DOM.inputPage, DOM.resultPage);
+        }
+
+        /**
+         * 返回到输入页面
+         */
+        function goBack() {
+            DOM.nicknameInput.value = '';
+            DOM.genderRadios.forEach(radio => radio.checked = false);
+            DOM.submitBtn.disabled = true;
+            DOM.errorMessage.textContent = '';
+            
+            switchPage(DOM.resultPage, DOM.inputPage);
+            DOM.nicknameInput.focus();
+        }
+
+        /**
+         * 处理加入QQ群
+         */
+        function handleJoinGroup() {
+            copyToClipboard(CONFIG.QQ_GROUP_NUMBER);
+            showPopup();
+            openQQGroup();
+        }
+
+        // ========== 事件绑定 ==========
+        
+        DOM.nicknameInput.addEventListener('input', checkFormValidity);
+        
+        DOM.genderRadios.forEach(radio => {
+            radio.addEventListener('change', checkFormValidity);
+        });
+        
+        DOM.submitBtn.addEventListener('click', showResult);
+        DOM.backBtn.addEventListener('click', goBack);
+        DOM.popupClose.addEventListener('click', () => {
+            DOM.popup.style.display = 'none';
+        });
+
+        // 使用事件委托处理两个加入群按钮
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.join-group-btn')) {
+                handleJoinGroup();
+            }
+        });
+        
+        // 回车键提交功能
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !DOM.submitBtn.disabled && DOM.inputPage.style.display !== 'none') {
+                showResult();
+            }
+        });
+
+        // 初始化
+        checkFormValidity();
+    </script>
 </body>
 </html>
