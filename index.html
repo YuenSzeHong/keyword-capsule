@@ -187,49 +187,6 @@
             min-height: 20px;
         }
 
-        /* GitHub 按钮样式 */
-        .join-group-btn {
-            position: relative;
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1;
-        }
-        
-        .join-group-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
-        }
-        
-        .join-group-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-        }
-        
-        .join-group-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #fad0c4 0%, #ff9a9e 100%);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
         .join-group-btn:hover::before {
             opacity: 1;
         }
@@ -317,11 +274,6 @@
             
             <div class="buttons-container">
                 <button class="submit-btn" id="submitBtn" disabled>点击查看</button>
-                
-                <!-- GitHub 链接按钮 -->
-                <a href="https://github.com/YuenSzeHong" target="_blank" class="join-group-btn">
-                    <span class="emoji">⭐</span> 访问我的 GitHub <span class="emoji">⭐</span>
-                </a>
             </div>
         </div>
         
@@ -341,11 +293,6 @@
 
             <div class="buttons-container">
                 <button class="back-btn" id="backBtn">返回重新测试</button>
-                
-                <!-- GitHub 链接按钮 -->
-                <a href="https://github.com/YuenSzeHong" target="_blank" class="join-group-btn">
-                    <span class="emoji">⭐</span> 访问我的 GitHub <span class="emoji">⭐</span>
-                </a>
             </div>
         </div>
     </div>
