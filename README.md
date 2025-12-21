@@ -8,6 +8,10 @@
 - React Hook Form + Zod 表单校验
 - `seedrandom` 确保关键词生成可复现
 
+## 在线部署版
+
+[https://keyword-capsule.yuen-network.top](https://keyword-capsule.yuen-network.top)
+
 ## 本地开发
 
 ```bash
